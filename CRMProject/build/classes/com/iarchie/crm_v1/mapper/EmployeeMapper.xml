@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iarchie.crm_v1.mapper.EmployeeMapper" >
+  <resultMap id="BaseResultMap" type="com.iarchie.crm_v1.domain.Employee" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="eduSchool" property="eduschool" jdbcType="VARCHAR" />
+    <result column="idCard" property="idcard" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="createTime" property="createtime" jdbcType="TIMESTAMP" />
+    <!--关联对象-->
+    <association property="positionId" javaType="Position">
+        <id column="position_id" property="id"/>
+      <id column="p_name" property="positionname"/>
+    </association>
+    <association property="deptId" javaType="Department">
+      <id column="dept_id" property="id"/>
+      <id column="d_name" property="deptname"/>
+    </association>
+  </resultMap>
+
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from employee
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.iarchie.crm_v1.domain.Employee" useGeneratedKeys="true" keyProperty="id" >
+    insert into employee (name, sex, phone,
+      email, position_id, eduSchool,
+      idCard, dept_id, address,
+      createTime)
+    values (#{name,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
+      #{email,jdbcType=VARCHAR}, #{positionId.id,jdbcType=BIGINT}, #{eduschool,jdbcType=VARCHAR},
+      #{idcard,jdbcType=VARCHAR}, #{deptId.id,jdbcType=BIGINT}, #{address,jdbcType=VARCHAR},
+      #{createtime,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.iarchie.crm_v1.domain.Employee" >
+    update employee
+    set
+      sex = #{sex,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      position_id = #{positionId.id,jdbcType=BIGINT},
+      eduSchool = #{eduschool,jdbcType=VARCHAR},
+      idCard = #{idcard,jdbcType=VARCHAR},
+      dept_id = #{deptId.id,jdbcType=BIGINT},
+      address = #{address,jdbcType=VARCHAR},
+      createTime = #{createtime,jdbcType=TIMESTAMP}
+    where name = #{name,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+      select e.id, e.name, e.sex, e.phone, e.email, p.id AS position_id, e.eduSchool, e.idCard, d.id AS dept_id, e.address,
+             createTime
+      from employee e JOIN department d ON e.dept_id = d.id
+                      JOIN position p ON e.position_id = p.id
+      where e.id =#{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select e.id, e.name, e.sex, e.phone, e.email, p.id AS position_id, e.eduSchool, e.idCard, e.address,
+           createTime, d.id AS dept_id,d.` deptName` AS d_name ,p.positionName AS p_name
+    from employee e JOIN department d ON e.dept_id = d.id
+                    JOIN position p ON e.position_id = p.id
+  </select>
+</mapper>

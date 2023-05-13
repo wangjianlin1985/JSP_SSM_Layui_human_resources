@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iarchie.crm_v1.mapper.PositionMapper" >
+  <resultMap id="BaseResultMap" type="com.iarchie.crm_v1.domain.Position" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="positionName" property="positionname" jdbcType="VARCHAR" />
+    <result column="positionMsg" property="positionmsg" jdbcType="VARCHAR" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from position
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.iarchie.crm_v1.domain.Position" useGeneratedKeys="true" keyProperty="id" >
+    insert into position (positionName, positionMsg)
+    values (#{positionname,jdbcType=VARCHAR}, #{positionmsg,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.iarchie.crm_v1.domain.Position" >
+    update position
+    set positionName = #{positionname,jdbcType=VARCHAR},
+      positionMsg = #{positionmsg,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, positionName, positionMsg
+    from position
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, positionName, positionMsg
+    from position
+    <where>
+      <if test="keyword !=null and keyword !='' and keyword !='undefined'">
+        positionName LIKE "%"#{keyword}"%"
+      </if>
+    </where>
+  </select>
+</mapper>

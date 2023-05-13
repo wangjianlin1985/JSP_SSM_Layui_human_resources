@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.iarchie.crm_v1.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.iarchie.crm_v1.domain.User">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="loginName" property="loginname" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="createTime" property="createtime" jdbcType="TIMESTAMP"/>
+        <result column="state" property="state" jdbcType="INTEGER"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete
+        from user
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.iarchie.crm_v1.domain.User" useGeneratedKeys="true" keyProperty="id">
+        insert into user (loginName, password, username,
+                          createTime, state)
+        values (#{loginname,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR},
+                #{createtime,jdbcType=TIMESTAMP}, #{state,jdbcType=INTEGER})
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="com.iarchie.crm_v1.domain.User">
+        update user
+        set
+            password   = #{password,jdbcType=VARCHAR},
+            username   = #{username,jdbcType=VARCHAR},
+            createTime = #{createtime,jdbcType=TIMESTAMP},
+            state      = #{state,jdbcType=INTEGER}
+        where loginName = #{loginname,jdbcType=VARCHAR}
+    </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select id, loginName, password, username, createTime, state
+        from user
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select id, loginName, password, username, createTime, state
+        from user
+        <where>
+            <if test="keyword1 !=null and keyword1 !='' and keyword1 !='undefined'">
+                loginName LIKE "%"#{keyword1}"%"
+            </if>
+            <if test="keyword2 !=null and keyword2 !='' and keyword2 !='undefined'">
+                AND state LIKE "%"#{keyword2}"%"
+            </if>
+        </where>
+    </select>
+    <select id="selectPageResult" resultType="com.iarchie.crm_v1.domain.User">
+        select id, loginName, password, username, createTime, state
+        from user limit
+             #{page},
+             #{pageLimit}
+    </select>
+    <select id="selectByLogin" resultType="com.iarchie.crm_v1.domain.User">
+        select id, loginName, password, username, createTime, state
+        from user
+        where loginName = #{loginname}
+          and password = #{password}
+    </select>
+</mapper>
